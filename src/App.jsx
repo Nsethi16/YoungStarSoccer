@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
 import { initializeDb } from './db';
 import PinGate from './components/PinGate';
-import PlayerAvatar from './components/PlayerAvatar';
 
 import HomePage from './pages/Home';
 import PlannerPage from './pages/Planner';
@@ -32,7 +31,9 @@ export default function App() {
         <header className="w-full border-b border-kp-outline-variant/10">
           <div className="flex justify-between items-center px-4 py-3 w-full max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3">
-              <PlayerAvatar size="sm" />
+              <div className="w-8 h-8 rounded-full bg-kp-primary-container flex items-center justify-center">
+                <span className="material-symbols-outlined text-kp-on-primary-fixed text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>sports_soccer</span>
+              </div>
               <h1 className="text-kp-primary-container font-headline font-black uppercase tracking-tighter text-2xl">BiX</h1>
             </div>
             <div className="flex items-center gap-4">
