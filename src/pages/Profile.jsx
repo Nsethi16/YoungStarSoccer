@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { getToday, formatDate } from '../utils';
+import { setPin, getPin, useAuth } from '../components/PinGate';
 
 const ACHIEVEMENT_DEFS = [
   { type: 'first-drill', title: 'First Step', desc: 'Complete your first drill', icon: 'sports_soccer' },
@@ -21,7 +22,10 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [newGoal, setNewGoal] = useState('');
-
+  const [showPinChange, setShowPinChange] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const [pinMsg, setPinMsg] = useState('');
+  const { lock } = useAuth();
   function startEdit() {
     setEditForm({
       name: player?.name || '',
@@ -307,6 +311,71 @@ export default function Profile() {
             );
           })}
         </div>
+      </div>
+
+      {/* Security */}
+      <div className="bg-kp-surface-container rounded-2xl p-5 border border-kp-outline-variant/10">
+        <h2 className="font-headline font-black text-kp-on-surface mb-4 uppercase tracking-tighter">Security</h2>
+
+        {showPinChange ? (
+          <div className="space-y-3">
+            <p className="text-sm text-kp-on-surface-variant">Current PIN: <span className="font-bold text-kp-on-surface">{getPin()}</span></p>
+            <div>
+              <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">New PIN</label>
+              <input
+                type="number"
+                value={newPin}
+                onChange={(e) => setNewPin(e.target.value.slice(0, 6))}
+                placeholder="Enter 4-6 digit PIN"
+                className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 placeholder:text-kp-on-surface-variant"
+                inputMode="numeric"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setShowPinChange(false); setNewPin(''); setPinMsg(''); }}
+                className="flex-1 py-2.5 border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface-variant hover:bg-kp-surface-variant transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newPin.length >= 4) {
+                    setPin(newPin);
+                    setPinMsg('PIN updated!');
+                    setNewPin('');
+                    setShowPinChange(false);
+                    setTimeout(() => setPinMsg(''), 3000);
+                  }
+                }}
+                disabled={newPin.length < 4}
+                className="flex-1 py-2.5 pitch-gradient text-kp-on-primary-fixed rounded-xl text-sm font-headline font-black uppercase tracking-widest active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowPinChange(true)}
+              className="w-full flex items-center gap-3 bg-kp-surface-high rounded-xl px-4 py-3 text-sm text-kp-on-surface hover:bg-kp-surface-variant transition-colors"
+            >
+              <span className="material-symbols-outlined text-kp-primary-container text-lg">pin</span>
+              <span className="flex-1 text-left">Change PIN</span>
+              <span className="material-symbols-outlined text-kp-on-surface-variant text-lg">chevron_right</span>
+            </button>
+            <button
+              onClick={lock}
+              className="w-full flex items-center gap-3 bg-kp-surface-high rounded-xl px-4 py-3 text-sm text-kp-on-surface hover:bg-kp-surface-variant transition-colors"
+            >
+              <span className="material-symbols-outlined text-kp-error text-lg">lock</span>
+              <span className="flex-1 text-left">Lock App Now</span>
+              <span className="material-symbols-outlined text-kp-on-surface-variant text-lg">chevron_right</span>
+            </button>
+          </div>
+        )}
+        {pinMsg && <p className="text-kp-primary-dim text-sm font-bold mt-2">{pinMsg}</p>}
       </div>
 
       {/* Export */}

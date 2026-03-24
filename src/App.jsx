@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
 import { initializeDb } from './db';
+import PinGate from './components/PinGate';
 
 import HomePage from './pages/Home';
 import PlannerPage from './pages/Planner';
@@ -22,6 +23,7 @@ export default function App() {
   }, []);
 
   return (
+    <PinGate>
     <div className="min-h-screen bg-kp-surface text-kp-on-surface">
       {/* Top Navigation */}
       <div className="sticky top-0 z-50 bg-kp-surface-low flex flex-col">
@@ -89,5 +91,6 @@ export default function App() {
         </Routes>
       </main>
     </div>
+    </PinGate>
   );
 }
