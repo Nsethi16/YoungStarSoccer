@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pitch: #059669;
+  --color-pitch-light: #d1fae5;
+  --color-pitch-dark: #047857;
+  --color-pitch-bg: #f8faf9;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  background: var(--color-pitch-bg);
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  margin: 0;
+}
+
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Smooth scrolling for the app */
+.scroll-smooth {
+  -webkit-overflow-scrolling: touch;
+}
