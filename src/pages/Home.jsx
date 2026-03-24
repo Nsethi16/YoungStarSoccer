@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
-import { getDailyQuote, getDailyTip } from '../data/motivation';
+import { quotes } from '../data/motivation';
+import { getDailyTip } from '../data/motivation';
 import { getToday, getWeekStart, formatDate, formatDateDisplay, getDayOfWeek, getGreeting } from '../utils';
 import CategoryBadge from '../components/CategoryBadge';
 import PlayerAvatar from '../components/PlayerAvatar';
@@ -11,8 +12,26 @@ export default function Home() {
   const today = getToday();
   const weekStart = getWeekStart();
   const dayOfWeek = getDayOfWeek(today);
-  const quote = getDailyQuote();
   const tip = getDailyTip();
+
+  // Cycling motivation quotes
+  const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * quotes.length));
+  const [fade, setFade] = useState(true);
+
+  const nextQuote = useCallback(() => {
+    setFade(false);
+    setTimeout(() => {
+      setQuoteIndex((i) => (i + 1) % quotes.length);
+      setFade(true);
+    }, 500);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(nextQuote, 8000);
+    return () => clearInterval(interval);
+  }, [nextQuote]);
+
+  const quote = quotes[quoteIndex];
 
   const player = useLiveQuery(() => db.player.get('default'));
   const allDrills = useLiveQuery(() => db.drills.toArray());
@@ -102,15 +121,29 @@ export default function Home() {
       </div>
 
       {/* Hero / Mantra Section */}
-      <section className="relative overflow-hidden rounded-2xl min-h-[120px] flex items-center p-6 bg-kp-surface-low">
+      <section className="relative overflow-hidden rounded-2xl min-h-[140px] flex items-center p-6 bg-kp-surface-low">
         <div className="absolute inset-0 bg-gradient-to-r from-kp-surface via-kp-surface/80 to-transparent z-[1]" />
         <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em] mb-1">MANTRA</p>
-            <h2 className="font-headline font-black text-2xl md:text-3xl leading-[0.9] tracking-tighter italic text-kp-on-surface uppercase">
-              "{quote.text.split(' ').slice(0, 12).join(' ')}{quote.text.split(' ').length > 12 ? '...' : ''}"
-            </h2>
-            <p className="text-kp-on-surface-variant text-sm mt-2">— {quote.author}</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em]">MANTRA</p>
+              <button
+                onClick={nextQuote}
+                className="text-kp-on-surface-variant hover:text-kp-primary-container active:scale-90 transition-all"
+                aria-label="Next quote"
+              >
+                <span className="material-symbols-outlined text-base">refresh</span>
+              </button>
+            </div>
+            <div
+              className="transition-all duration-500 ease-in-out"
+              style={{ opacity: fade ? 1 : 0, transform: fade ? 'translateY(0)' : 'translateY(8px)' }}
+            >
+              <h2 className="font-headline font-black text-2xl md:text-3xl leading-[0.9] tracking-tighter italic text-kp-on-surface uppercase">
+                "{quote.text}"
+              </h2>
+              <p className="text-kp-on-surface-variant text-sm mt-2">— {quote.author}</p>
+            </div>
           </div>
           <Link
             to="/planner"
