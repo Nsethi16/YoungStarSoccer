@@ -111,7 +111,7 @@ export default function Planner() {
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
           <h1 className="font-headline font-black text-5xl md:text-7xl italic tracking-tighter uppercase leading-none text-kp-primary">
-            Weekly<br />Tactics
+            Weekly<br />Plan
           </h1>
           <p className="text-kp-on-surface-variant text-sm mt-2">
             <span className="font-bold text-kp-on-surface">{weekSummary.count}</span> drills ·{' '}
