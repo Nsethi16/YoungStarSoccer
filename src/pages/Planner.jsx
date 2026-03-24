@@ -1,18 +1,17 @@
 import { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ChevronLeft, ChevronRight, Plus, X, Search, Clock } from 'lucide-react';
 import { db } from '../db';
 import { CATEGORIES } from '../data/drills';
 import DrillCard from '../components/DrillCard';
 import CategoryBadge from '../components/CategoryBadge';
 import { getWeekStart, getWeekDays, formatDate, getToday } from '../utils';
 
-const DAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_ABBR = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 export default function Planner() {
   const today = getToday();
   const [weekOffset, setWeekOffset] = useState(0);
-  const [pickerDay, setPickerDay] = useState(null); // dayOfWeek index to add drill to
+  const [pickerDay, setPickerDay] = useState(null);
   const [pickerSearch, setPickerSearch] = useState('');
   const [pickerCategory, setPickerCategory] = useState('All');
 
@@ -100,47 +99,46 @@ export default function Planner() {
     await db.plannedDrills.delete(pdId);
   }
 
-  const weekLabel = currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const weekEndDate = new Date(currentWeekStart);
+  weekEndDate.setDate(weekEndDate.getDate() + 6);
+  const weekLabel = `${currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} — ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 
   if (!allDrills) return <div className="p-6" />;
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      {/* Week Navigation */}
-      <div className="flex items-center justify-between pt-2 mb-2">
-        <button
-          onClick={() => setWeekOffset((o) => o - 1)}
-          className="p-2.5 hover:bg-gray-100 rounded-xl transition-colors active:scale-90"
-          aria-label="Previous week"
-        >
-          <ChevronLeft size={22} />
-        </button>
-        <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-900">Week of {weekLabel}</h1>
+    <div className="px-4 md:px-8 pt-6 max-w-[1600px] mx-auto">
+      {/* Header & Week Selector */}
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-headline font-black text-5xl md:text-7xl italic tracking-tighter uppercase leading-none text-kp-primary">
+            Weekly<br />Tactics
+          </h1>
+          <p className="text-kp-on-surface-variant text-sm mt-2">
+            <span className="font-bold text-kp-on-surface">{weekSummary.count}</span> drills ·{' '}
+            <span className="font-bold text-kp-on-surface">{weekSummary.minutes}</span> min
+          </p>
         </div>
-        <button
-          onClick={() => setWeekOffset((o) => o + 1)}
-          className="p-2.5 hover:bg-gray-100 rounded-xl transition-colors active:scale-90"
-          aria-label="Next week"
-        >
-          <ChevronRight size={22} />
-        </button>
-      </div>
+        <div className="flex items-center bg-kp-surface-high rounded-full p-1.5 gap-2 w-fit">
+          <button
+            onClick={() => setWeekOffset((o) => o - 1)}
+            className="p-1.5 hover:bg-kp-surface-variant rounded-full transition-all text-kp-on-surface"
+          >
+            <span className="material-symbols-outlined text-xl">chevron_left</span>
+          </button>
+          <div className="px-3 font-headline font-bold text-xs tracking-widest uppercase text-kp-on-surface">
+            {weekLabel}
+          </div>
+          <button
+            onClick={() => setWeekOffset((o) => o + 1)}
+            className="p-1.5 hover:bg-kp-surface-variant rounded-full transition-all text-kp-on-surface"
+          >
+            <span className="material-symbols-outlined text-xl">chevron_right</span>
+          </button>
+        </div>
+      </section>
 
-      {/* Summary */}
-      <div className="flex items-center justify-center gap-4 text-sm text-gray-500 mb-4">
-        <span className="flex items-center gap-1">
-          <span className="font-semibold text-gray-700">{weekSummary.count}</span> drills
-        </span>
-        <span className="text-gray-300">·</span>
-        <span className="flex items-center gap-1">
-          <Clock size={14} />
-          <span className="font-semibold text-gray-700">{weekSummary.minutes}</span> min
-        </span>
-      </div>
-
-      {/* Day Columns */}
-      <div className="flex gap-3 overflow-x-auto pb-4 -mx-1 px-1 snap-x">
+      {/* Calendar Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-7 gap-3 min-h-[500px] pb-24">
         {weekDays.map((day, i) => {
           const dateStr = formatDate(day);
           const isToday = dateStr === today;
@@ -149,94 +147,117 @@ export default function Planner() {
           return (
             <div
               key={i}
-              className={`flex-shrink-0 w-[180px] md:w-auto md:flex-1 bg-white rounded-xl shadow-sm snap-start ${
-                isToday ? 'ring-2 ring-emerald-500' : ''
+              className={`md:col-span-1 rounded-xl p-3 flex flex-col gap-3 ${
+                isToday
+                  ? 'bg-kp-surface-container border-t-4 border-kp-primary shadow-lg'
+                  : 'bg-kp-surface-low'
               }`}
             >
               {/* Day Header */}
-              <div className={`px-3 py-2.5 border-b border-gray-100 rounded-t-xl ${isToday ? 'bg-emerald-50' : ''}`}>
-                <p className={`font-semibold text-sm ${isToday ? 'text-emerald-700' : 'text-gray-700'}`}>
+              <div className="flex justify-between items-center">
+                <div className={`font-headline font-black text-xl italic ${isToday ? 'text-kp-primary' : 'text-kp-on-surface-variant'}`}>
                   {DAY_ABBR[i]}
-                </p>
-                <p className={`text-xs ${isToday ? 'text-emerald-500' : 'text-gray-400'}`}>
-                  {day.getDate()}
-                </p>
+                </div>
+                {isToday ? (
+                  <div className="w-7 h-7 rounded-full bg-kp-primary-container text-kp-on-primary-fixed flex items-center justify-center font-bold text-[10px]">
+                    {day.getDate()}
+                  </div>
+                ) : (
+                  <div className="font-bold text-[10px] text-kp-on-surface-variant">{day.getDate()}</div>
+                )}
               </div>
 
               {/* Drills */}
-              <div className="p-2 space-y-2 min-h-[100px]">
+              <div className="flex flex-col gap-2">
                 {dayDrills.map((pd) => {
                   const drill = drillMap[pd.drillId];
                   if (!drill) return null;
                   return (
-                    <div key={pd.id} className="relative group">
-                      <DrillCard drill={drill} compact />
-                      <button
-                        onClick={() => removeDrill(pd.id)}
-                        className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-red-600"
-                        aria-label={`Remove ${drill.name}`}
-                      >
-                        <X size={12} strokeWidth={3} />
-                      </button>
+                    <div key={pd.id} className={`${isToday ? 'bg-kp-surface-highest' : 'bg-kp-surface-high'} p-3 rounded-lg relative overflow-hidden group border border-kp-outline-variant/10`}>
+                      <div className="absolute top-0 left-0 w-1 h-full bg-kp-primary-container" />
+                      <div className="flex justify-between items-start mb-1">
+                        <CategoryBadge category={drill.category} size="sm" />
+                        <button
+                          onClick={() => removeDrill(pd.id)}
+                          className="text-kp-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity hover:text-kp-error"
+                        >
+                          <span className="material-symbols-outlined text-sm">close</span>
+                        </button>
+                      </div>
+                      <h4 className="font-headline font-bold text-xs text-kp-on-surface">{drill.name}</h4>
+                      <span className="text-[10px] text-kp-on-surface-variant">{drill.duration}m</span>
                     </div>
                   );
                 })}
-
-                <button
-                  onClick={() => {
-                    setPickerDay(i);
-                    setPickerSearch('');
-                    setPickerCategory('All');
-                  }}
-                  className="w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-emerald-300 hover:text-emerald-500 transition-colors flex items-center justify-center gap-1"
-                  aria-label={`Add drill to ${DAY_ABBR[i]}`}
-                >
-                  <Plus size={16} />
-                  <span className="text-xs font-medium">Add</span>
-                </button>
               </div>
+
+              {/* Add Button */}
+              <button
+                onClick={() => {
+                  setPickerDay(i);
+                  setPickerSearch('');
+                  setPickerCategory('All');
+                }}
+                className="mt-auto w-full py-2 border-2 border-dashed border-kp-outline-variant/20 hover:border-kp-primary-dim hover:bg-kp-surface-variant/30 transition-all rounded-lg flex items-center justify-center text-kp-outline-variant"
+              >
+                <span className="material-symbols-outlined text-sm">add</span>
+              </button>
             </div>
           );
         })}
       </div>
 
+      {/* FAB */}
+      <button
+        onClick={() => {
+          // Open picker for today's day
+          const todayDow = getDayOfWeek(today);
+          setPickerDay(todayDow >= 0 && todayDow <= 6 ? todayDow : 0);
+          setPickerSearch('');
+          setPickerCategory('All');
+        }}
+        className="fixed bottom-6 right-6 md:bottom-12 md:right-12 w-14 h-14 bg-kp-primary-container text-kp-on-primary-fixed rounded-full shadow-[0_20px_40px_rgba(202,253,0,0.3)] flex items-center justify-center active:scale-90 transition-all z-40 group"
+      >
+        <span className="material-symbols-outlined text-3xl transition-transform group-hover:rotate-90">add</span>
+      </button>
+
       {/* Drill Picker Modal */}
       {pickerDay !== null && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setPickerDay(null)}>
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setPickerDay(null)}>
           <div
-            className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col"
+            className="bg-kp-surface-container rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col border border-kp-outline-variant/10"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b border-gray-100">
+            <div className="p-4 border-b border-kp-outline-variant/10">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-bold text-gray-900">Add to {DAY_ABBR[pickerDay]}</h3>
-                <button onClick={() => setPickerDay(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <X size={20} />
+                <h3 className="text-lg font-headline font-black text-kp-on-surface">Add to {DAY_ABBR[pickerDay]}</h3>
+                <button onClick={() => setPickerDay(null)} className="p-2 hover:bg-kp-surface-variant rounded-full transition-colors text-kp-on-surface-variant">
+                  <span className="material-symbols-outlined text-xl">close</span>
                 </button>
               </div>
 
               {/* Search */}
               <div className="relative mb-3">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-kp-on-surface-variant text-lg">search</span>
                 <input
                   type="text"
                   value={pickerSearch}
                   onChange={(e) => setPickerSearch(e.target.value)}
                   placeholder="Search drills..."
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-gray-200"
+                  className="w-full pl-10 pr-4 py-2.5 bg-kp-surface-high rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 border border-kp-outline-variant/10 placeholder:text-kp-on-surface-variant"
                 />
               </div>
 
               {/* Category Chips */}
-              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
                 {['All', ...(CATEGORIES || [])].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setPickerCategory(cat)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                    className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-200 ${
                       pickerCategory === cat
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-gray-100 text-gray-600'
+                        ? 'bg-kp-primary text-kp-on-primary'
+                        : 'bg-kp-surface-high text-kp-on-surface-variant'
                     }`}
                   >
                     {cat}
@@ -255,7 +276,7 @@ export default function Planner() {
                 />
               ))}
               {filteredDrills.length === 0 && (
-                <p className="text-center text-sm text-gray-400 py-8">No drills found</p>
+                <p className="text-center text-sm text-kp-on-surface-variant py-8">No drills found</p>
               )}
             </div>
           </div>
@@ -263,4 +284,10 @@ export default function Planner() {
       )}
     </div>
   );
+}
+
+function getDayOfWeek(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDay();
+  return day === 0 ? 6 : day - 1;
 }

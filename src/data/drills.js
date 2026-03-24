@@ -10,20 +10,20 @@ export const CATEGORIES = [
 ];
 
 export const CATEGORY_COLORS = {
-  Speed: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300', fill: '#3b82f6' },
-  Dribbling: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-300', fill: '#8b5cf6' },
-  Shooting: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-300', fill: '#ef4444' },
-  Passing: { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300', fill: '#f97316' },
-  'First Touch': { bg: 'bg-teal-100', text: 'text-teal-700', border: 'border-teal-300', fill: '#14b8a6' },
-  Agility: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-300', fill: '#eab308' },
-  Fitness: { bg: 'bg-pink-100', text: 'text-pink-700', border: 'border-pink-300', fill: '#ec4899' },
-  Juggling: { bg: 'bg-indigo-100', text: 'text-indigo-700', border: 'border-indigo-300', fill: '#6366f1' },
+  Speed: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-400', fill: '#60a5fa' },
+  Dribbling: { bg: 'bg-purple-500/20', text: 'text-purple-300', border: 'border-purple-400', fill: '#a78bfa' },
+  Shooting: { bg: 'bg-red-500/20', text: 'text-red-300', border: 'border-red-400', fill: '#f87171' },
+  Passing: { bg: 'bg-orange-500/20', text: 'text-orange-300', border: 'border-orange-400', fill: '#fb923c' },
+  'First Touch': { bg: 'bg-teal-500/20', text: 'text-teal-300', border: 'border-teal-400', fill: '#2dd4bf' },
+  Agility: { bg: 'bg-yellow-500/20', text: 'text-yellow-300', border: 'border-yellow-400', fill: '#facc15' },
+  Fitness: { bg: 'bg-pink-500/20', text: 'text-pink-300', border: 'border-pink-400', fill: '#f472b6' },
+  Juggling: { bg: 'bg-indigo-500/20', text: 'text-indigo-300', border: 'border-indigo-400', fill: '#818cf8' },
 };
 
 export const DIFFICULTY_COLORS = {
-  Beginner: { bg: 'bg-green-100', text: 'text-green-700' },
-  Intermediate: { bg: 'bg-amber-100', text: 'text-amber-700' },
-  Advanced: { bg: 'bg-red-100', text: 'text-red-700' },
+  Beginner: { bg: 'bg-green-500/20', text: 'text-green-300' },
+  Intermediate: { bg: 'bg-amber-500/20', text: 'text-amber-300' },
+  Advanced: { bg: 'bg-red-500/20', text: 'text-red-300' },
 };
 
 export const defaultDrills = [

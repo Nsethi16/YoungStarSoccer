@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Flame, CheckCircle2, BarChart3, Calendar, ChevronRight } from 'lucide-react';
 import { db } from '../db';
 import { getDailyQuote, getDailyTip } from '../data/motivation';
 import { getToday, getWeekStart, formatDate, formatDateDisplay, getDayOfWeek, getGreeting } from '../utils';
@@ -59,7 +58,6 @@ export default function Home() {
     const logDates = new Set(allLogs.filter((l) => l.completed).map((l) => l.date));
     let count = 0;
     const d = new Date(today + 'T00:00:00');
-    // Check if today has logs; if not, start from yesterday
     if (!logDates.has(today)) {
       d.setDate(d.getDate() - 1);
     }
@@ -92,79 +90,74 @@ export default function Home() {
   const todayDone = todayPlanned.filter((pd) => completedIds.has(pd.id)).length;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto space-y-5">
-      {/* Header */}
-      <div className="pt-2">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {getGreeting()}, {playerName}! ⚽
-        </h1>
-        <p className="text-gray-500 mt-0.5">{formatDateDisplay(today)}</p>
-      </div>
-
-      {/* Motivation Card */}
-      <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-2xl p-6 text-white shadow-md">
-        <p className="text-lg italic leading-relaxed">"{quote.text}"</p>
-        <p className="text-right text-emerald-200 text-sm mt-2">— {quote.author}</p>
-      </div>
-
-      {/* Daily Tip */}
-      {tip && (
-        <div className="bg-white rounded-xl shadow-sm p-4 flex items-start gap-3">
-          <span className="text-xl">💡</span>
+    <div className="px-4 md:px-8 py-6 max-w-[1600px] mx-auto w-full space-y-5">
+      {/* Hero / Mantra Section */}
+      <section className="relative overflow-hidden rounded-2xl min-h-[120px] flex items-center p-6 bg-kp-surface-low">
+        <div className="absolute inset-0 bg-gradient-to-r from-kp-surface via-kp-surface/80 to-transparent z-[1]" />
+        <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-0.5">Daily Tip</p>
-            <p className="text-sm text-gray-700">{tip.text}</p>
+            <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em] mb-1">MANTRA</p>
+            <h2 className="font-headline font-black text-2xl md:text-3xl leading-[0.9] tracking-tighter italic text-kp-on-surface uppercase">
+              "{quote.text.split(' ').slice(0, 12).join(' ')}{quote.text.split(' ').length > 12 ? '...' : ''}"
+            </h2>
+            <p className="text-kp-on-surface-variant text-sm mt-2">— {quote.author}</p>
           </div>
+          <Link
+            to="/planner"
+            className="pitch-gradient text-kp-on-primary-fixed font-headline font-black px-6 py-3 rounded-full flex items-center gap-2 uppercase tracking-widest text-xs hover:shadow-[0_0_20px_rgba(202,253,0,0.3)] transition-all active:scale-95 shrink-0"
+          >
+            Start <span className="material-symbols-outlined font-black text-sm">bolt</span>
+          </Link>
         </div>
-      )}
+      </section>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-          <Flame size={22} className="mx-auto text-orange-500 mb-1" />
-          <p className="text-2xl font-bold text-gray-900">{streak}</p>
-          <p className="text-xs text-gray-500">Day Streak</p>
+        <div className="bg-kp-surface-container rounded-xl p-4 text-center border border-kp-outline-variant/10">
+          <span className="material-symbols-outlined text-orange-400 text-2xl mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
+          <p className="text-2xl font-headline font-black text-kp-on-surface">{streak}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-kp-on-surface-variant">Day Streak</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-          <CheckCircle2 size={22} className="mx-auto text-emerald-500 mb-1" />
-          <p className="text-2xl font-bold text-gray-900">
+        <div className="bg-kp-surface-container rounded-xl p-4 text-center border border-kp-outline-variant/10">
+          <span className="material-symbols-outlined text-kp-primary-container text-2xl mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+          <p className="text-2xl font-headline font-black text-kp-on-surface">
             {todayDone}/{todayPlanned.length}
           </p>
-          <p className="text-xs text-gray-500">Today</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-kp-on-surface-variant">Today</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-          <BarChart3 size={22} className="mx-auto text-blue-500 mb-1" />
-          <p className="text-2xl font-bold text-gray-900">{weekCompleted}%</p>
-          <p className="text-xs text-gray-500">This Week</p>
+        <div className="bg-kp-surface-container rounded-xl p-4 text-center border border-kp-outline-variant/10">
+          <span className="material-symbols-outlined text-blue-400 text-2xl mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>bar_chart</span>
+          <p className="text-2xl font-headline font-black text-kp-on-surface">{weekCompleted}%</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-kp-on-surface-variant">This Week</p>
         </div>
       </div>
 
-      {/* Today's Plan */}
+      {/* Today's Drills */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-bold text-gray-900">Today's Plan</h2>
+        <div className="flex justify-between items-baseline mb-3">
+          <h3 className="font-headline font-black text-xl uppercase tracking-tighter text-kp-on-surface">Today's Drills</h3>
           {todayPlanned.length > 0 && (
-            <span className="text-sm text-gray-500">
-              {todayDone} of {todayPlanned.length} done
-            </span>
+            <Link to="/planner" className="text-kp-on-surface-variant hover:text-kp-primary-container transition-colors font-bold uppercase text-[10px] tracking-widest">
+              Edit Routine
+            </Link>
           )}
         </div>
 
         {todayPlanned.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-            <Calendar size={40} className="mx-auto text-gray-300 mb-3" />
-            <p className="text-gray-500 mb-4">No drills planned for today</p>
+          <div className="bg-kp-surface-low rounded-xl p-10 text-center border border-kp-outline-variant/10">
+            <span className="material-symbols-outlined text-kp-on-surface-variant text-5xl mb-3">event_note</span>
+            <p className="text-kp-on-surface-variant mb-4">No drills planned for today</p>
             <Link
               to="/planner"
-              className="inline-flex items-center gap-1.5 bg-emerald-500 text-white font-semibold px-5 py-3 rounded-xl hover:bg-emerald-600 active:scale-95 transition-all duration-200"
+              className="inline-flex items-center gap-2 pitch-gradient text-kp-on-primary-fixed font-headline font-black px-6 py-3 rounded-full uppercase tracking-widest text-xs hover:shadow-[0_0_20px_rgba(202,253,0,0.3)] active:scale-95 transition-all"
             >
               Plan Your Week
-              <ChevronRight size={18} />
+              <span className="material-symbols-outlined text-sm">chevron_right</span>
             </Link>
           </div>
         ) : (
-          <div className="space-y-2">
-            {todayPlanned.map((pd) => {
+          <div className="flex flex-col gap-2">
+            {todayPlanned.map((pd, idx) => {
               const drill = drillMap[pd.drillId];
               if (!drill) return null;
               const done = completedIds.has(pd.id);
@@ -172,32 +165,20 @@ export default function Home() {
               return (
                 <div
                   key={pd.id}
-                  className={`bg-white rounded-xl shadow-sm p-4 flex items-center gap-3 transition-all duration-200 ${
-                    done ? 'opacity-60 bg-emerald-50/50' : ''
+                  className={`bg-kp-surface-low rounded-xl p-3 border border-kp-outline-variant/10 flex items-center gap-4 transition-all duration-200 ${
+                    done ? 'opacity-50' : ''
                   }`}
                 >
-                  <button
-                    onClick={() => !done && markComplete(pd)}
-                    disabled={done}
-                    className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                      done
-                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                        : 'border-gray-300 hover:border-emerald-400 active:scale-90'
-                    }`}
-                    aria-label={done ? 'Completed' : `Complete ${drill.name}`}
-                  >
-                    {done && <CheckCircle2 size={16} strokeWidth={3} />}
-                  </button>
-
+                  <div className="w-10 h-10 bg-kp-surface-high rounded-lg flex items-center justify-center text-kp-primary-dim font-headline font-black text-sm shrink-0">
+                    {String(idx + 1).padStart(2, '0')}
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`font-semibold text-gray-900 ${done ? 'line-through' : ''}`}>
-                        {drill.name}
-                      </span>
-                      <CategoryBadge category={drill.category} size="sm" />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5">{drill.duration} min</p>
-
+                    <h4 className={`text-sm font-headline font-black text-kp-on-surface truncate ${done ? 'line-through' : ''}`}>
+                      {drill.name}
+                    </h4>
+                    <p className="text-kp-on-surface-variant text-[11px] truncate">
+                      {drill.category} · {drill.duration} min
+                    </p>
                     {drill.isMeasurable && !done && (
                       <div className="mt-2 flex items-center gap-2">
                         <input
@@ -206,18 +187,67 @@ export default function Home() {
                           value={measuredValues[pd.id] || ''}
                           onChange={(e) => setMeasuredValues((v) => ({ ...v, [pd.id]: e.target.value }))}
                           onClick={(e) => e.stopPropagation()}
-                          className="w-24 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          className="w-24 px-3 py-1.5 text-sm bg-kp-surface-high border border-kp-outline-variant/20 rounded-lg text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 focus:border-transparent"
                         />
-                        <span className="text-xs text-gray-500">{drill.measureUnit}</span>
+                        <span className="text-xs text-kp-on-surface-variant">{drill.measureUnit}</span>
                       </div>
                     )}
                   </div>
+                  {!done && (
+                    <button
+                      onClick={() => markComplete(pd)}
+                      className="bg-kp-primary-container text-kp-on-primary-fixed font-headline font-black px-4 py-2 rounded-lg uppercase tracking-widest text-[10px] active:scale-95 transition-all flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-xs">check_circle</span> Record
+                    </button>
+                  )}
+                  {done && (
+                    <span className="material-symbols-outlined text-kp-primary-container text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      task_alt
+                    </span>
+                  )}
                 </div>
               );
             })}
+
+            {/* Session Progress Bar */}
+            {todayPlanned.length > 0 && (
+              <div className="bg-kp-primary-container rounded-xl p-3 flex items-center gap-4">
+                <div className="flex-1">
+                  <p className="text-kp-on-primary-fixed/70 text-[9px] font-black uppercase tracking-widest mb-1">
+                    Session Progress: {todayDone} of {todayPlanned.length}
+                  </p>
+                  <div className="w-full bg-kp-on-primary-fixed/20 h-2 rounded-full overflow-hidden">
+                    <div
+                      className="bg-kp-on-primary-fixed h-full transition-all duration-500"
+                      style={{ width: `${todayPlanned.length ? (todayDone / todayPlanned.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+                <Link
+                  to="/progress"
+                  className="bg-kp-on-primary-fixed text-kp-primary-container font-headline font-black px-3 py-2 rounded-lg uppercase tracking-widest text-[9px]"
+                >
+                  Summary
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>
+
+      {/* Tactic / Tip Section */}
+      {tip && (
+        <div className="bg-kp-surface-high rounded-2xl p-4 border border-kp-outline-variant/10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-kp-primary-container text-lg">strategy</span>
+            <h3 className="font-headline font-black text-lg uppercase tracking-tighter text-kp-on-surface">
+              Tip: {tip.category}
+            </h3>
+          </div>
+          <p className="text-kp-on-surface-variant text-sm leading-relaxed">{tip.text}</p>
+        </div>
+      )}
     </div>
   );
 }

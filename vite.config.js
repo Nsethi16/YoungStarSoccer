@@ -10,11 +10,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'YoungStar Soccer',
-        short_name: 'YoungStar',
+        name: 'BiX — YoungStar Soccer',
+        short_name: 'BiX',
         description: 'Soccer drill planner for young players',
-        theme_color: '#059669',
-        background_color: '#f8faf9',
+        theme_color: '#091009',
+        background_color: '#091009',
         display: 'standalone',
         orientation: 'any',
         start_url: '/',

@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Search, X, Plus, ChevronDown } from 'lucide-react';
 import { db } from '../db';
 import { CATEGORIES, CATEGORY_COLORS, DIFFICULTY_COLORS } from '../data/drills';
 import DrillCard from '../components/DrillCard';
@@ -17,7 +16,7 @@ export default function Library() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedDrill, setSelectedDrill] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [dayPicker, setDayPicker] = useState(null); // drill to assign to a day
+  const [dayPicker, setDayPicker] = useState(null);
   const [createForm, setCreateForm] = useState(defaultForm());
 
   function defaultForm() {
@@ -85,42 +84,45 @@ export default function Library() {
   const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="px-4 md:px-8 pt-6 pb-24 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4 pt-2">
-        <h1 className="text-2xl font-bold text-gray-900">Drill Library</h1>
-        <span className="bg-emerald-100 text-emerald-700 text-sm font-semibold px-2.5 py-0.5 rounded-full">
-          {allDrills.length}
-        </span>
+      <div className="mb-6">
+        <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em] mb-1">The Drill Lab</p>
+        <h1 className="font-headline font-black text-4xl md:text-5xl italic tracking-tighter uppercase leading-none text-kp-primary">
+          Master The<br />Pitch
+        </h1>
+        <p className="text-kp-on-surface-variant text-sm mt-2">
+          <span className="font-bold text-kp-on-surface">{allDrills.length}</span> drills available
+        </p>
       </div>
 
       {/* Search */}
-      <div className="relative mb-3">
-        <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="relative mb-4">
+        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-kp-on-surface-variant text-xl">search</span>
         <input
           type="text"
           placeholder="Search drills..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-10 py-3 bg-white rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm"
+          className="w-full pl-12 pr-10 py-3.5 bg-kp-surface-high rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 border border-kp-outline-variant/10 placeholder:text-kp-on-surface-variant"
         />
         {search && (
-          <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-            <X size={18} />
+          <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-kp-on-surface-variant hover:text-kp-on-surface">
+            <span className="material-symbols-outlined text-xl">close</span>
           </button>
         )}
       </div>
 
       {/* Category Chips */}
-      <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-200 ${
               activeCategory === cat
-                ? 'bg-emerald-500 text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-kp-primary text-kp-on-primary'
+                : 'bg-kp-surface-high text-kp-on-surface-variant hover:bg-kp-surface-variant'
             }`}
           >
             {cat}
@@ -128,15 +130,16 @@ export default function Library() {
         ))}
       </div>
 
-      {/* Drill List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+      {/* Drill Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
         {filtered.map((drill) => (
           <DrillCard key={drill.id} drill={drill} onClick={() => setSelectedDrill(drill)} />
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-kp-on-surface-variant">
+          <span className="material-symbols-outlined text-5xl mb-2 block">search_off</span>
           <p className="text-lg">No drills found</p>
           <p className="text-sm mt-1">Try a different search or category</p>
         </div>
@@ -145,24 +148,24 @@ export default function Library() {
       {/* FAB */}
       <button
         onClick={() => setShowCreate(true)}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-emerald-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-emerald-600 active:scale-90 transition-all duration-200 z-40"
+        className="fixed bottom-6 right-6 md:bottom-12 md:right-12 w-14 h-14 bg-kp-primary-container text-kp-on-primary-fixed rounded-full shadow-[0_20px_40px_rgba(202,253,0,0.3)] flex items-center justify-center active:scale-90 transition-all z-40 group"
         aria-label="Create new drill"
       >
-        <Plus size={26} />
+        <span className="material-symbols-outlined text-3xl transition-transform group-hover:rotate-90">add</span>
       </button>
 
       {/* Drill Detail Modal */}
       {selectedDrill && !dayPicker && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setSelectedDrill(null)}>
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setSelectedDrill(null)}>
           <div
-            className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+            className="bg-kp-surface-container rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto border border-kp-outline-variant/10"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">{selectedDrill.name}</h2>
-                <button onClick={() => setSelectedDrill(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <X size={20} />
+                <h2 className="text-xl font-headline font-black text-kp-on-surface">{selectedDrill.name}</h2>
+                <button onClick={() => setSelectedDrill(null)} className="p-2 hover:bg-kp-surface-variant rounded-full transition-colors text-kp-on-surface-variant">
+                  <span className="material-symbols-outlined text-xl">close</span>
                 </button>
               </div>
 
@@ -171,39 +174,43 @@ export default function Library() {
               <div className="flex items-center gap-2 flex-wrap mt-4">
                 <CategoryBadge category={selectedDrill.category} size="md" />
                 {selectedDrill.difficulty && (
-                  <span className={`inline-flex items-center rounded-full text-sm px-3 py-1 font-medium ${
-                    (DIFFICULTY_COLORS[selectedDrill.difficulty] || {}).bg || 'bg-gray-100'
-                  } ${(DIFFICULTY_COLORS[selectedDrill.difficulty] || {}).text || 'text-gray-700'}`}>
+                  <span className={`inline-flex items-center rounded-full text-xs px-3 py-1 font-black uppercase tracking-widest ${
+                    (DIFFICULTY_COLORS[selectedDrill.difficulty] || {}).bg || 'bg-kp-surface-variant'
+                  } ${(DIFFICULTY_COLORS[selectedDrill.difficulty] || {}).text || 'text-kp-on-surface-variant'}`}>
                     {selectedDrill.difficulty}
                   </span>
                 )}
-                <span className="text-sm text-gray-500">{selectedDrill.duration} min</span>
+                <span className="text-sm text-kp-on-surface-variant flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm">schedule</span>
+                  {selectedDrill.duration} min
+                </span>
               </div>
 
               {selectedDrill.description && (
-                <p className="text-gray-700 mt-4 leading-relaxed">{selectedDrill.description}</p>
+                <p className="text-kp-on-surface-variant mt-4 leading-relaxed text-sm">{selectedDrill.description}</p>
               )}
 
               {selectedDrill.equipment?.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Equipment</p>
+                  <p className="text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-2">Equipment</p>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedDrill.equipment.map((item) => (
-                      <span key={item} className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full">{item}</span>
+                      <span key={item} className="bg-kp-surface-variant text-kp-on-surface-variant text-sm px-3 py-1 rounded-full">{item}</span>
                     ))}
                   </div>
                 </div>
               )}
 
               {selectedDrill.isMeasurable && (
-                <p className="text-sm text-gray-500 mt-3">
-                  📏 Measurable: {selectedDrill.measureLabel} ({selectedDrill.measureUnit})
+                <p className="text-sm text-kp-on-surface-variant mt-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-kp-primary-dim text-sm">straighten</span>
+                  Measurable: {selectedDrill.measureLabel} ({selectedDrill.measureUnit})
                 </p>
               )}
 
               <button
                 onClick={() => setDayPicker(selectedDrill)}
-                className="w-full mt-5 bg-emerald-500 text-white font-semibold py-3.5 rounded-xl hover:bg-emerald-600 active:scale-[0.98] transition-all duration-200"
+                className="w-full mt-5 pitch-gradient text-kp-on-primary-fixed font-headline font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:shadow-[0_0_20px_rgba(202,253,0,0.3)] active:scale-[0.98] transition-all duration-200"
               >
                 Add to This Week's Plan
               </button>
@@ -214,16 +221,16 @@ export default function Library() {
 
       {/* Day Picker Modal */}
       {dayPicker && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setDayPicker(null)}>
-          <div className="bg-white rounded-2xl p-5 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">Pick a Day</h3>
-            <p className="text-sm text-gray-500 mb-4">Add "{dayPicker.name}" to:</p>
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setDayPicker(null)}>
+          <div className="bg-kp-surface-container rounded-2xl p-5 w-full max-w-sm border border-kp-outline-variant/10" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-headline font-black text-kp-on-surface mb-1">Pick a Day</h3>
+            <p className="text-sm text-kp-on-surface-variant mb-4">Add "{dayPicker.name}" to:</p>
             <div className="grid grid-cols-2 gap-2">
               {DAY_NAMES.map((name, i) => (
                 <button
                   key={i}
                   onClick={() => addToDay(dayPicker, i)}
-                  className="py-3 px-4 bg-gray-50 rounded-xl text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 active:scale-95 transition-all duration-200"
+                  className="py-3 px-4 bg-kp-surface-high rounded-xl text-sm font-headline font-bold text-kp-on-surface-variant hover:bg-kp-primary-container/20 hover:text-kp-primary active:scale-95 transition-all duration-200"
                 >
                   {name}
                 </button>
@@ -231,7 +238,7 @@ export default function Library() {
             </div>
             <button
               onClick={() => setDayPicker(null)}
-              className="w-full mt-3 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              className="w-full mt-3 py-2.5 text-sm text-kp-on-surface-variant hover:text-kp-on-surface transition-colors"
             >
               Cancel
             </button>
@@ -241,49 +248,49 @@ export default function Library() {
 
       {/* Create Drill Modal */}
       {showCreate && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setShowCreate(false)}>
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setShowCreate(false)}>
           <div
-            className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+            className="bg-kp-surface-container rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto border border-kp-outline-variant/10"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Create Drill</h2>
-                <button onClick={() => setShowCreate(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <X size={20} />
+                <h2 className="text-xl font-headline font-black text-kp-on-surface">Create Drill</h2>
+                <button onClick={() => setShowCreate(false)} className="p-2 hover:bg-kp-surface-variant rounded-full transition-colors text-kp-on-surface-variant">
+                  <span className="material-symbols-outlined text-xl">close</span>
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Name *</label>
                   <input
                     type="text"
                     value={createForm.name}
                     onChange={(e) => setCreateForm((f) => ({ ...f, name: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 placeholder:text-kp-on-surface-variant"
                     placeholder="e.g., Cone Weave Sprint"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Description</label>
                   <textarea
                     value={createForm.description}
                     onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                    className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 resize-none placeholder:text-kp-on-surface-variant"
                     placeholder="Describe the drill..."
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Category</label>
                     <select
                       value={createForm.category}
                       onChange={(e) => setCreateForm((f) => ({ ...f, category: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50"
                     >
                       {(CATEGORIES || []).map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -291,11 +298,11 @@ export default function Library() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+                    <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Difficulty</label>
                     <select
                       value={createForm.difficulty}
                       onChange={(e) => setCreateForm((f) => ({ ...f, difficulty: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50"
                     >
                       {DIFFICULTIES.map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -305,34 +312,34 @@ export default function Library() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (min)</label>
+                  <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Duration (min)</label>
                   <input
                     type="number"
                     value={createForm.duration}
                     onChange={(e) => setCreateForm((f) => ({ ...f, duration: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50"
                     min={1}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Video URL</label>
+                  <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Video URL</label>
                   <input
                     type="url"
                     value={createForm.videoUrl}
                     onChange={(e) => setCreateForm((f) => ({ ...f, videoUrl: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 placeholder:text-kp-on-surface-variant"
                     placeholder="YouTube or Instagram link"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Equipment (comma-separated)</label>
+                  <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Equipment (comma-separated)</label>
                   <input
                     type="text"
                     value={createForm.equipment}
                     onChange={(e) => setCreateForm((f) => ({ ...f, equipment: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 placeholder:text-kp-on-surface-variant"
                     placeholder="e.g., Cones, Ball, Goal"
                   />
                 </div>
@@ -341,26 +348,26 @@ export default function Library() {
                   <button
                     onClick={() => setCreateForm((f) => ({ ...f, isMeasurable: !f.isMeasurable }))}
                     className={`w-12 h-7 rounded-full transition-colors duration-200 ${
-                      createForm.isMeasurable ? 'bg-emerald-500' : 'bg-gray-300'
+                      createForm.isMeasurable ? 'bg-kp-primary-container' : 'bg-kp-surface-variant'
                     }`}
                   >
                     <div
-                      className={`w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 mx-1 ${
+                      className={`w-5 h-5 bg-kp-on-surface rounded-full shadow-sm transition-transform duration-200 mx-1 ${
                         createForm.isMeasurable ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
                   </button>
-                  <span className="text-sm text-gray-700">Measurable drill</span>
+                  <span className="text-sm text-kp-on-surface-variant">Measurable drill</span>
                 </div>
 
                 {createForm.isMeasurable && (
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                      <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Unit</label>
                       <select
                         value={createForm.measureUnit}
                         onChange={(e) => setCreateForm((f) => ({ ...f, measureUnit: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50"
                       >
                         {MEASURE_UNITS.map((u) => (
                           <option key={u} value={u}>{u}</option>
@@ -368,12 +375,12 @@ export default function Library() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Label</label>
+                      <label className="block text-[10px] font-black text-kp-on-surface-variant uppercase tracking-widest mb-1">Label</label>
                       <input
                         type="text"
                         value={createForm.measureLabel}
                         onChange={(e) => setCreateForm((f) => ({ ...f, measureLabel: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-4 py-3 bg-kp-surface-high border border-kp-outline-variant/20 rounded-xl text-sm text-kp-on-surface focus:outline-none focus:ring-2 focus:ring-kp-primary-container/50 placeholder:text-kp-on-surface-variant"
                         placeholder="e.g., Time, Distance"
                       />
                     </div>
@@ -383,16 +390,16 @@ export default function Library() {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setShowCreate(false)}
-                    className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="flex-1 py-3 border border-kp-outline-variant/20 rounded-xl text-sm font-headline font-bold text-kp-on-surface-variant hover:bg-kp-surface-variant transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreate}
                     disabled={!createForm.name.trim()}
-                    className="flex-1 py-3 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 py-3 pitch-gradient text-kp-on-primary-fixed rounded-xl text-sm font-headline font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(202,253,0,0.3)] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Create Drill
+                    Create
                   </button>
                 </div>
               </div>
