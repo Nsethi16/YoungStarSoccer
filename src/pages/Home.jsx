@@ -27,7 +27,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(nextQuote, 8000);
+    const interval = setInterval(nextQuote, 16000);
     return () => clearInterval(interval);
   }, [nextQuote]);
 
@@ -121,28 +121,19 @@ export default function Home() {
       </div>
 
       {/* Hero / Mantra Section */}
-      <section className="relative overflow-hidden rounded-2xl min-h-[140px] flex items-center p-6 bg-kp-surface-low">
+      <section className="relative overflow-hidden rounded-2xl h-[180px] md:h-[160px] p-6 bg-kp-surface-low">
         <div className="absolute inset-0 bg-gradient-to-r from-kp-surface via-kp-surface/80 to-transparent z-[1]" />
-        <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em]">MANTRA</p>
-              <button
-                onClick={nextQuote}
-                className="text-kp-on-surface-variant hover:text-kp-primary-container active:scale-90 transition-all"
-                aria-label="Next quote"
-              >
-                <span className="material-symbols-outlined text-base">refresh</span>
-              </button>
-            </div>
+        <div className="relative z-10 w-full h-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <p className="text-kp-primary-dim font-headline font-black text-[10px] uppercase tracking-[0.3em] mb-1">MANTRA</p>
             <div
-              className="transition-all duration-500 ease-in-out"
+              className="transition-all duration-500 ease-in-out h-[90px] md:h-[80px] overflow-hidden"
               style={{ opacity: fade ? 1 : 0, transform: fade ? 'translateY(0)' : 'translateY(8px)' }}
             >
-              <h2 className="font-headline font-black text-2xl md:text-3xl leading-[0.9] tracking-tighter italic text-kp-on-surface uppercase">
+              <h2 className="font-headline font-black text-xl md:text-2xl leading-tight tracking-tighter italic text-kp-on-surface uppercase line-clamp-3">
                 "{quote.text}"
               </h2>
-              <p className="text-kp-on-surface-variant text-sm mt-2">— {quote.author}</p>
+              <p className="text-kp-on-surface-variant text-sm mt-1">— {quote.author}</p>
             </div>
           </div>
           <Link
