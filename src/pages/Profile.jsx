@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { getToday, formatDate } from '../utils';
 import { setPin, getPin, useAuth } from '../components/PinGate';
+import PlayerAvatar from '../components/PlayerAvatar';
 
 const ACHIEVEMENT_DEFS = [
   { type: 'first-drill', title: 'First Step', desc: 'Complete your first drill', icon: 'sports_soccer' },
@@ -26,6 +27,35 @@ export default function Profile() {
   const [newPin, setNewPin] = useState('');
   const [pinMsg, setPinMsg] = useState('');
   const { lock } = useAuth();
+  const fileInputRef = useRef(null);
+
+  async function handleImageUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      // Resize to max 256px to keep IndexedDB lean
+      const img = new Image();
+      img.onload = async () => {
+        const max = 256;
+        const scale = Math.min(max / img.width, max / img.height, 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        await db.player.update('default', { avatarUrl: dataUrl });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }
+
+  async function removeAvatar() {
+    await db.player.update('default', { avatarUrl: null });
+  }
+
   function startEdit() {
     setEditForm({
       name: player?.name || '',
@@ -165,9 +195,27 @@ export default function Profile() {
 
       {/* Profile Card */}
       <div className="bg-kp-surface-container rounded-2xl p-6 text-center border border-kp-outline-variant/10">
-        <div className="w-20 h-20 rounded-full bg-kp-primary-container text-kp-on-primary-fixed flex items-center justify-center text-3xl font-headline font-black mx-auto mb-4">
-          {initials}
+        <div className="relative w-20 h-20 mx-auto mb-4">
+          <PlayerAvatar size="lg" />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-kp-primary-container text-kp-on-primary-fixed flex items-center justify-center shadow-lg active:scale-90 transition-all"
+          >
+            <span className="material-symbols-outlined text-sm">photo_camera</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
         </div>
+        {player.avatarUrl && (
+          <button onClick={removeAvatar} className="text-[10px] text-kp-on-surface-variant hover:text-kp-error font-bold uppercase tracking-widest mb-2 transition-colors">
+            Remove Photo
+          </button>
+        )}
 
         {editing ? (
           <div className="space-y-3 max-w-xs mx-auto">

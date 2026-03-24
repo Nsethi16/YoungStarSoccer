@@ -5,6 +5,7 @@ import { db } from '../db';
 import { getDailyQuote, getDailyTip } from '../data/motivation';
 import { getToday, getWeekStart, formatDate, formatDateDisplay, getDayOfWeek, getGreeting } from '../utils';
 import CategoryBadge from '../components/CategoryBadge';
+import PlayerAvatar from '../components/PlayerAvatar';
 
 export default function Home() {
   const today = getToday();
@@ -91,6 +92,15 @@ export default function Home() {
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1600px] mx-auto w-full space-y-5">
+      {/* Greeting with Avatar */}
+      <div className="flex items-center gap-4">
+        <PlayerAvatar size="md" />
+        <div>
+          <h1 className="font-headline font-black text-xl text-kp-on-surface">{getGreeting()}, {playerName}!</h1>
+          <p className="text-kp-on-surface-variant text-sm">{formatDateDisplay(today)}</p>
+        </div>
+      </div>
+
       {/* Hero / Mantra Section */}
       <section className="relative overflow-hidden rounded-2xl min-h-[120px] flex items-center p-6 bg-kp-surface-low">
         <div className="absolute inset-0 bg-gradient-to-r from-kp-surface via-kp-surface/80 to-transparent z-[1]" />
